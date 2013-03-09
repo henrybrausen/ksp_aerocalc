@@ -1,4 +1,4 @@
 ksp_aerocalc
 ============
 
-Aerobraking Calculator for Kerbal Space Program
+Aerobraking Calculator for Kerbal Space Program.

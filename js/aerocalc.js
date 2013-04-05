@@ -297,18 +297,6 @@ $(document).ready(function() {
 		
 		var target = parseFloat($('#inputAP').val(), 10)+Planet.Rmin;
 		
-		if (target > r) {
-		$('#inputAlt').parent().parent().addClass('error');
-			$('#inputVel').parent().parent().addClass('error');
-			$('#inputPE').parent().parent().addClass('error');
-			$('#inputAP').parent().parent().addClass('error');
-			$('#outputPE').val('No Solution!');
-			$('#outputDV').val('No Solution!');
-			$('#outputAng').val('No Solution!');
-			$('#outputVel2').val('No Solution!');
-			return;
-		}
-		
 		solve(r,v,pe,target,d,Planet);
 		//solve(5600000 ,364.9,660000 , 1600000 , 0.2, Planets.Kerbin);
 	});

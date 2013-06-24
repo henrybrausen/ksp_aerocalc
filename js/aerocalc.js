@@ -237,6 +237,18 @@ $(document).ready(function() {
 		return ap;
 	};
 	
+	var parseUnitFloat = function(v) {
+		var v = v.toLowerCase();
+		var value = parseFloat(v);
+		if (v.indexOf("mm") !== -1) {
+			return value * 1000000
+		} else if (v.indexOf("km") !== -1) {
+			return value * 1000;
+		} else {
+			return value;
+		}
+	};
+
 	// Main function
 	// r is scalar (distance from centre of planet)
 	// v is scalar (magnitude of orbital velocity)
@@ -289,13 +301,13 @@ $(document).ready(function() {
 		$('#inputAP').parent().parent().removeClass('error');
 	
 		var Planet = that.Planets[$('#inputBody').val()];
-		var r = parseFloat($('#inputAlt').val(), 10)+Planet.Rmin;
+		var r = parseUnitFloat($('#inputAlt').val(), 10)+Planet.Rmin;
 		var v = parseFloat($('#inputVel').val(), 10);
-		var pe = parseFloat($('#inputPE').val(), 10)+Planet.Rmin;
+		var pe = parseUnitFloat($('#inputPE').val(), 10)+Planet.Rmin;
 		
 		var d = parseFloat($('#inputD').val(), 10);
 		
-		var target = parseFloat($('#inputAP').val(), 10)+Planet.Rmin;
+		var target = parseUnitFloat($('#inputAP').val(), 10)+Planet.Rmin;
 		
 		if (target > r) {
 		$('#inputAlt').parent().parent().addClass('error');

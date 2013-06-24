@@ -18,7 +18,7 @@
 		<h1 class="text-center">KSP Aerobraking Calculator</h1>
 		<div class="row">
 			<div class="span8">
-			<p class="lead">Enter your <strong>current altitude</strong>, <strong>orbital velocity</strong>, and <strong>periapsis distance</strong> into the calculator at right. Then, enter the <strong>apoapsis distance</strong> you want after aerobraking. The calculator will find a manoeuver to get you there.</p>
+			<p class="lead">Enter your <strong>current altitude</strong>, <strong>orbital velocity</strong>, and <strong>periapsis distance</strong> into the calculator at right. Then, enter the <strong>apoapsis distance</strong> you want after aerobraking. The calculator will find a manoeuver to get you there. Units: <strong>m</strong>, <strong>km</strong> or <strong>Mm</strong></p>
 			<h2>How to Use the Solution</h2>
 			<p>
 			The solution found by the calculator is in the form of an orbital manoeuver. Point your craft at the angle given by the calculator and thrust until the orbit periapsis matches that given by the solution. Your orbital velocity should not significantly change.
@@ -68,9 +68,9 @@
 							</div>
 						</div>
 						<div class="control-group">
-							<label class="control-label" for="inputAlt">Altitude (m)</label>
+							<label class="control-label" for="inputAlt">Altitude</label>
 							<div class="controls">
-								<input type="text" id="inputAlt" value="10000000">
+								<input type="text" id="inputAlt" value="10000 km">
 							</div>
 						</div>
 						<div class="control-group">
@@ -80,16 +80,16 @@
 							</div>
 						</div>
 						<div class="control-group">
-							<label class="control-label" for="inputPE">Periapsis (m)</label>
+							<label class="control-label" for="inputPE">Periapsis</label>
 							<div class="controls">
-								<input type="text" id="inputPE" value="60000">
+								<input type="text" id="inputPE" value="60 km">
 							</div>
 						</div>
 					<legend>Target Orbit Details</legend>
 					<div class="control-group">
-							<label class="control-label" for="inputAP">Desired Apoapsis (m)</label>
+							<label class="control-label" for="inputAP">Desired Apoapsis</label>
 							<div class="controls">
-								<input type="text" id="inputAP" value="1000000">
+								<input type="text" id="inputAP" value="1000 km">
 							</div>
 					</div>
 					<legend>Ship Details (Advanced)</legend>

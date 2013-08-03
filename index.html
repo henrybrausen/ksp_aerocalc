@@ -14,19 +14,20 @@
 	<![endif]-->
 	</head>
 	<body>
+	<div id="wrap">
 	<div class="container">
 		<div class="row">
 		<div class="span12">
 		<h1 class="text-center">KSP Aerobraking Calculator</h1>
 		<div class="row">
 			<div class="span8">
-			<p class="lead">Enter your <strong>current altitude</strong>, <strong>orbital velocity</strong>, and <strong>periapsis distance</strong> into the calculator at right. Then, enter the <strong>apoapsis distance</strong> you want after aerobraking. The calculator will find a manoeuver to get you there. Units: <strong>m</strong>, <strong>km</strong> or <strong>Mm</strong></p>
+			<p class="lead">Enter your <strong>current altitude</strong>, <strong>orbital velocity</strong>, and <strong>periapsis distance</strong> into the calculator at right. Then, enter the <strong>apoapsis distance</strong> you want after aerobraking. The calculator will find a manoeuver to get you there.</p>
 			<h2>How to Use the Solution</h2>
 			<p>
 			The solution found by the calculator is in the form of an orbital manoeuver. Point your craft at the angle given by the calculator and thrust until the orbit periapsis matches that given by the solution. Your orbital velocity should not significantly change.
 			</p>
 			<p>
-			Note on the angles: Angles are measured from the top of the navball. The direction in which to thrust will always lie between the prograde and retrograde markers. The heading in which to thrust is the same as your prograde / retrograde vectors (i.e. in the plane of orbit.)
+			<strong>Note on the angles:</strong> Angles are measured from the top of the navball. The direction in which to thrust will always be directly between the prograde and retrograde markers (i.e. perpendicular to your directino of travel.)
 			</p>
 			<h2>Suggestions for Best Results</h2>
 			<p>
@@ -52,12 +53,11 @@
 			<dt>When can I use 0.2 as the drag coefficient?</dt>
 			<dd>For most ships, the drag coefficient is very close to 0.2. This is because most parts in the game have a drag coefficient of 0.2. Those that do not (for instance, docking ports), tend to have a small mass and therefore do not significantly alter the drag coefficient. However, if using modded parts (or if your ship's mass is largely made up of docking ports), you'll want to calculate the drag coefficient for your ship. This can be done following the methods <a href="http://wiki.kerbalspaceprogram.com/wiki/Atmosphere">here.</a></dd>
 			</dl>
-			<p class="form-actions">If you have comments or feedback, feel free to message me on reddit (<a href="http://reddit.com/u/alterb">/u/alterB</a>) or on the <a href="http://forum.kerbalspaceprogram.com">KSP forums</a> (username alterbaron).</p>
-			<p>--Alterbaron</p>
 			</div>
 			<div class="span2">
 				<form class="form-horizontal">
 					<fieldset class="calc">
+					<p class="text-info">New feature! Units: <strong>m</strong>, <strong>km</strong> or <strong>Mm</strong></p>
 						<legend>Current Orbit Details</legend>
 						<div class="control-group">
 							<label class="control-label" for="inputBody">Body</label>
@@ -139,6 +139,15 @@
 			</div>
 		</div>
 		</div>
+		</div>
+	</div>
+	<div id="push">
+	</div>
+	</div>
+	<div id="footer">
+		<div class="container">
+			<p class="muted">If you have comments or feedback, feel free to message me on reddit (<a href="http://reddit.com/u/alterb">/u/alterB</a>) or on the <a href="http://forum.kerbalspaceprogram.com">KSP forums</a> (username alterbaron).<br />
+<a href="https://github.com/alterbaron/ksp_aerocalc">Contribute to the project on github!</a><br /><a href="https://github.com/alterbaron/ksp_aerocalc/blob/master/AUTHORS">Authors</a></p>
 		</div>
 	</div>
 	<script src="http://code.jquery.com/jquery.js"></script>

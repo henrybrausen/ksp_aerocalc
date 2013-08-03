@@ -117,10 +117,6 @@ $(document).ready(function() {
 		return {rf:r, vf:v, tf:t};
 	};
 	
-	// var my_F = function(r,v) {
-		// return [0,-1];
-	// };
-	
 	//console.log(integrate_path(my_F, 1, [0, 10], [0, 0], 0.0001, {Rmin:0, Ratm:10000}));
 	
 	// Get orbit parameters in the plane of orbit

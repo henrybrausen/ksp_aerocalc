@@ -233,11 +233,12 @@ $(document).ready(function() {
 		return ap;
 	};
 	
+	// Allow (optional) use of units.
 	var parseUnitFloat = function(v) {
 		var v = v.toLowerCase();
 		var value = parseFloat(v);
 		if (v.indexOf("mm") !== -1) {
-			return value * 1000000
+			return value * 1000000;
 		} else if (v.indexOf("km") !== -1) {
 			return value * 1000;
 		} else {

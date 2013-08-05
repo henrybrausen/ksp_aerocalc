@@ -27,7 +27,7 @@
 			The solution found by the calculator is in the form of an orbital manoeuver. Point your craft at the angle given by the calculator and thrust until the orbit periapsis matches that given by the solution. Your orbital velocity should not significantly change.
 			</p>
 			<p>
-			<strong>Note on the angles:</strong> Angles are measured from the top of the navball. The direction in which to thrust will always be directly between the prograde and retrograde markers (i.e. perpendicular to your directino of travel.)
+			<strong>Note on the angles:</strong> Angles are measured from the top of the navball. The direction in which to thrust will always be directly between the prograde and retrograde markers (i.e. perpendicular to your direction of travel.)
 			</p>
 			<h2>Suggestions for Best Results</h2>
 			<p>
@@ -57,8 +57,8 @@
 			<div class="span2">
 				<form class="form-horizontal">
 					<fieldset class="calc">
-					<p class="text-info">New feature! Units: <strong>m</strong>, <strong>km</strong> or <strong>Mm</strong></p>
 						<legend>Current Orbit Details</legend>
+						<p class="text-info">New feature! Units: <strong>m</strong>, <strong>km</strong> or <strong>Mm</strong></p>
 						<div class="control-group">
 							<label class="control-label" for="inputBody">Body</label>
 							<div class="controls">
@@ -87,6 +87,24 @@
 							<label class="control-label" for="inputPE">Periapsis</label>
 							<div class="controls">
 								<input type="text" id="inputPE" value="60 km">
+							</div>
+						</div>
+						<p class="text-info">New feature! Select the direction of your orbit for more accurate results.</p>
+						<div class="control-group">
+							<label class="control-label" for="inputPE">Orbit Direction</label>
+							<div class="controls">
+								<label class="radio">
+									<input type="radio" name="inputDir" id="inputDir1" value="prograde" checked>
+									Prograde (CCW)
+								</label>
+								<label class="radio">
+									<input type="radio" name="inputDir" id="inputDir2" value="retrograde">
+									Retrograde (CW)
+								</label>
+								<label class="radio">
+									<input type="radio" name="inputDir" id="inputDir2" value="ignore">
+									Ignore (Less Accurate)
+								</label>
 							</div>
 						</div>
 					<legend>Target Orbit Details</legend>

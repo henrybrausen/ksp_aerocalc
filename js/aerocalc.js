@@ -2,23 +2,24 @@
 $(document).ready(function() {
 (function() {
 
-	this.mkPlanet = function(Rmin, Ratm, SOI, mu, H0, P0) {
+	this.mkPlanet = function(Rmin, Ratm, SOI, mu, H0, P0, Trot) {
 		return {
 			Rmin: Rmin,	// Radius of planet (distance to surface from center)
 			Ratm: Ratm+Rmin,	// Simplifies calculations later
 			SOI: SOI,	// Radius of sphere of influence of planet
 			mu: mu,	// Grav. parameter
 			H0: H0,	// Scale height of atmosphere (P falls off by 1/e for each H0)
-			P0: P0	// Pressure at zero altitude.
+			P0: P0,	// Pressure at zero altitude.
+			Trot: Trot	// Sidereal Rotation Period
 		};
 	};
 	
 	this.Planets = {
-		Eve: mkPlanet(700000,107974.64,85109365,8.1717302e12,7000,5),
-		Kerbin: mkPlanet(600000,69077.553,84159286,3.5316e12,5000,1),
-		Duna: mkPlanet(320000,36618.218,47921949,301363210000,3000,0.2),
-		Jool: mkPlanet(6000000,165235.61,2455985200,2.82528e14,10000,15),
-		Laythe: mkPlanet(500000,55262.042,3723645.8,1.962e12,4000,0.8)
+		Eve: mkPlanet(700000,107974.64,85109365,8.1717302e12,7000,5,80500),
+		Kerbin: mkPlanet(600000,69077.553,84159286,3.5316e12,5000,1,21600),
+		Duna: mkPlanet(320000,36618.218,47921949,301363210000,3000,0.2,65517.859),
+		Jool: mkPlanet(6000000,165235.61,2455985200,2.82528e14,10000,15,36000),
+		Laythe: mkPlanet(500000,55262.042,3723645.8,1.962e12,4000,0.8,52980.879)
 	};
 	
 	var sign = function(x) { return x > 0 ? 1 : x < 0 ? -1 : 0; }
@@ -142,12 +143,24 @@ $(document).ready(function() {
 	};
 	
 	// Net force in atmosphere
-	var in_atmo_force = function(d, m, A, Planet) {
-		Kp = 1.2230948554874*0.008;
-		return function(r,v) {return vsum(vmult(-0.5*Kp*Planet.P0*Math.exp((Planet.Rmin-vnorm(r))/Planet.H0)*vnorm(v)*d*m*A, v), vmult(-m*Planet.mu/Math.pow(vnorm(r),3), r));};
+	var in_atmo_force = function(d, m, A, Planet, orbitDir) {
+		var Kp = 1.2230948554874*0.008;
+		// Use surface velocity in drag calculation!
+		switch (orbitDir) {
+			case "prograde":
+				var v_surface = function(r,v) {return vdiff(v, vmult(sign(r[0]*v[1]-r[1]*v[0]),[-2.0*Math.PI/Planet.Trot*r[1], 2.0*Math.PI/Planet.Trot*r[0]]))};
+				break;
+			case "retrograde":
+				var v_surface = function(r,v) {return vdiff(v, vmult(-sign(r[0]*v[1]-r[1]*v[0]),[-2.0*Math.PI/Planet.Trot*r[1], 2.0*Math.PI/Planet.Trot*r[0]]))};
+				break;
+			case "ignore":
+				var v_surface = function(r,v) {return v;}
+				break;
+		};
+		return function(r,v) {return vsum(vmult(-0.5*Kp*Planet.P0*Math.exp((Planet.Rmin-vnorm(r))/Planet.H0)*vnorm(v_surface(r,v))*d*m*A, v_surface(r,v)), vmult(-m*Planet.mu/Math.pow(vnorm(r),3), r));};
 	};
 	
-	var calc1 = function(dist, vx, vy, d, Planet) {
+	var calc1 = function(dist, vx, vy, d, Planet, orbitDir) {
 		var r0 = [dist, 0];
 		var v0 = [vx, vy];
 		var dt = 1;
@@ -195,7 +208,7 @@ $(document).ready(function() {
 		// The sines and cosines here have been chosen to give the velocity as [vr, vtheta]
 		var vcontact = vmult(vcontact_mag, [-Math.cos(theta_1+theta_contact), -Math.sin(theta_1+theta_contact)]);
 		
-		var F = in_atmo_force( d, m, A, Planet );
+		var F = in_atmo_force( d, m, A, Planet, orbitDir );
 		
 		// Integrate path in atmosphere.
 		var rvt = integrate_path(F, m, rcontact, vcontact, dt, Planet);
@@ -226,10 +239,10 @@ $(document).ready(function() {
 	//console.log(calc1(1200000,-800,1540,0.2,Planets.Kerbin));
 	
 	// Perform calculations for a given r (scalar), v (scalar), rpe (scalar)
-	var calc_pe = function( r, v, rpe, d, Planet ) {
+	var calc_pe = function( r, v, rpe, d, Planet, orbitDir ) {
 		var vy = (rpe/r)*Math.sqrt(v*v+2*Planet.mu*(1/rpe-1/r));
 		var vx = Math.sqrt(v*v-vy*vy);
-		var ap = calc1(r, vx, vy, d, Planet);
+		var ap = calc1(r, vx, vy, d, Planet, orbitDir);
 		return ap;
 	};
 	
@@ -251,11 +264,11 @@ $(document).ready(function() {
 	// v is scalar (magnitude of orbital velocity)
 	// rpe is scalar (periapse distance)
 	// We search for a constant-velocity solution to this problem.
-	var solve = function( r, v, rpe, targ, d, Planet ) {
+	var solve = function( r, v, rpe, targ, d, Planet, orbitDir ) {
 		var vy = (rpe/r)*Math.sqrt(v*v+2*Planet.mu*(1/rpe-1/r));
 		var vx = Math.sqrt(v*v-vy*vy);
 		
-		var c_ap = function(pe) {return calc_pe(r,v,pe,d,Planet)-targ};
+		var c_ap = function(pe) {return calc_pe(r,v,pe,d,Planet,orbitDir)-targ};
 		
 		var new_pe = fzero(c_ap,Planet.Rmin, Planet.Ratm);
 		
@@ -301,12 +314,13 @@ $(document).ready(function() {
 		var r = parseUnitFloat($('#inputAlt').val(), 10)+Planet.Rmin;
 		var v = parseFloat($('#inputVel').val(), 10);
 		var pe = parseUnitFloat($('#inputPE').val(), 10)+Planet.Rmin;
+		var orbitDir = $('input[name=inputDir]:radio:checked').val();
 		
 		var d = parseFloat($('#inputD').val(), 10);
 		
 		var target = parseUnitFloat($('#inputAP').val(), 10)+Planet.Rmin;
 		
-		solve(r,v,pe,target,d,Planet);
+		solve(r,v,pe,target,d,Planet,orbitDir);
 		//solve(5600000 ,364.9,660000 , 1600000 , 0.2, Planets.Kerbin);
 	});
 	return this;

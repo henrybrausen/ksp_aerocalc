@@ -22,7 +22,7 @@ $(document).ready(function() {
 		Laythe: mkPlanet(500000,55262.042,3723645.8,1.962e12,4000,0.8,52980.879)
 	};
 	
-	var sign = function(x) { return x > 0 ? 1 : x < 0 ? -1 : 0; }
+	this.sign = function(x) { return x > 0 ? 1 : x < 0 ? -1 : 0; }
 	
 	// Simple (and UGLY) vector math implementation
 	this.vmult = function( k, v ) {
@@ -75,7 +75,7 @@ $(document).ready(function() {
 		while (N < Nmax) {
 			c = (a+b)/2;
 			fc = f(c);	// Don't want to re-evaluate this -- it's expensive!
-			if (fc == 0|| (b-a)/2<Tol) return c;
+			if (fc == 0 || (b-a)/2<Tol) return c;
 			N = N + 1;
 			if (sign(fc) == sign(fa)) {
 				a = c;
@@ -114,14 +114,13 @@ $(document).ready(function() {
 			t = t + dt;
 			firstrun = false;
 		}
-		
 		return {rf:r, vf:v, tf:t};
 	};
 	
 	//console.log(integrate_path(my_F, 1, [0, 10], [0, 0], 0.0001, {Rmin:0, Ratm:10000}));
 	
 	// Get orbit parameters in the plane of orbit
-	var get_orbit_params = function( r, v, Planet ) {
+	this.get_orbit_params = function( r, v, Planet ) {
 		// sp. orbital energy
 		var ep = vdot(v,v)/2 - Planet.mu/vnorm(r);
 		// sp. angular momentum
@@ -143,15 +142,18 @@ $(document).ready(function() {
 	};
 	
 	// Net force in atmosphere
-	var in_atmo_force = function(d, m, A, Planet, orbitDir) {
+	this.in_atmo_force = function(d, m, A, Planet, orbitDir) {
 		var Kp = 1.2230948554874*0.008;
 		// Use surface velocity in drag calculation!
 		switch (orbitDir) {
+			// Note that the default orbit direction is CW in the code.
+			// (This is because atmospheric contact angle >0)
+			// This makes the sign of the planet's angular rotation the opposite of what one would expect!
 			case "prograde":
-				var v_surface = function(r,v) {return vdiff(v, vmult(sign(r[0]*v[1]-r[1]*v[0]),[-2.0*Math.PI/Planet.Trot*r[1], 2.0*Math.PI/Planet.Trot*r[0]]))};
+				var v_surface = function(r,v) {return vdiff(v, vmult(-1,[-2.0*Math.PI/Planet.Trot*r[1], 2.0*Math.PI/Planet.Trot*r[0]]))};
 				break;
 			case "retrograde":
-				var v_surface = function(r,v) {return vdiff(v, vmult(-sign(r[0]*v[1]-r[1]*v[0]),[-2.0*Math.PI/Planet.Trot*r[1], 2.0*Math.PI/Planet.Trot*r[0]]))};
+				var v_surface = function(r,v) {return vdiff(v, vmult(1,[-2.0*Math.PI/Planet.Trot*r[1], 2.0*Math.PI/Planet.Trot*r[0]]))};
 				break;
 			case "ignore":
 				var v_surface = function(r,v) {return v;}
@@ -160,7 +162,9 @@ $(document).ready(function() {
 		return function(r,v) {return vsum(vmult(-0.5*Kp*Planet.P0*Math.exp((Planet.Rmin-vnorm(r))/Planet.H0)*vnorm(v_surface(r,v))*d*m*A, v_surface(r,v)), vmult(-m*Planet.mu/Math.pow(vnorm(r),3), r));};
 	};
 	
-	var calc1 = function(dist, vx, vy, d, Planet, orbitDir) {
+	var final_orbit_params;
+	
+	this.calc1 = function(dist, vx, vy, d, Planet, orbitDir) {
 		var r0 = [dist, 0];
 		var v0 = [vx, vy];
 		var dt = 1;
@@ -197,6 +201,7 @@ $(document).ready(function() {
 		//console.log(Planet);
 		// Angle from periapsis at which we contact the atmosphere.
 		var theta_contact = Math.acos((1/p1.ec)*(p1.a*(1-p1.ec*p1.ec)/Planet.Ratm-1));
+		
 		// Magnitude of velocity when contacting atmosphere
 		var vcontact_mag = Math.sqrt(2*(p1.ep+Planet.mu/Planet.Ratm));
 		
@@ -234,12 +239,13 @@ $(document).ready(function() {
 			rap_out = Planet.Rmin;
 			return rap_out;
 		}
+		final_orbit_params = get_orbit_params(rvt.rf, rvt.vf, Planet);
 		return rap_out;
 	};
 	//console.log(calc1(1200000,-800,1540,0.2,Planets.Kerbin));
 	
 	// Perform calculations for a given r (scalar), v (scalar), rpe (scalar)
-	var calc_pe = function( r, v, rpe, d, Planet, orbitDir ) {
+	this.calc_pe = function( r, v, rpe, d, Planet, orbitDir ) {
 		var vy = (rpe/r)*Math.sqrt(v*v+2*Planet.mu*(1/rpe-1/r));
 		var vx = Math.sqrt(v*v-vy*vy);
 		var ap = calc1(r, vx, vy, d, Planet, orbitDir);
@@ -247,7 +253,7 @@ $(document).ready(function() {
 	};
 	
 	// Allow (optional) use of units.
-	var parseUnitFloat = function(v) {
+	this.parseUnitFloat = function(v) {
 		var v = v.toLowerCase();
 		var value = parseFloat(v);
 		if (v.indexOf("mm") !== -1) {
@@ -264,15 +270,13 @@ $(document).ready(function() {
 	// v is scalar (magnitude of orbital velocity)
 	// rpe is scalar (periapse distance)
 	// We search for a constant-velocity solution to this problem.
-	var solve = function( r, v, rpe, targ, d, Planet, orbitDir ) {
+	this.solve = function( r, v, rpe, targ, d, Planet, orbitDir ) {
 		var vy = (rpe/r)*Math.sqrt(v*v+2*Planet.mu*(1/rpe-1/r));
 		var vx = Math.sqrt(v*v-vy*vy);
 		
 		var c_ap = function(pe) {return calc_pe(r,v,pe,d,Planet,orbitDir)-targ};
 		
 		var new_pe = fzero(c_ap,Planet.Rmin, Planet.Ratm);
-		
-		
 		
 		var vy1 = (new_pe/r)*Math.sqrt(v*v+2*Planet.mu*(1/new_pe-1/r));
 		var vx1 = Math.sqrt(v*v-vy1*vy1);
@@ -291,6 +295,7 @@ $(document).ready(function() {
 			$('#outputDV').val('No Solution!');
 			$('#outputAng').val('No Solution!');
 			$('#outputVel2').val('No Solution!');
+			$('#outputCircDV').val('No Solution!');
 			
 			return;
 		}
@@ -299,6 +304,7 @@ $(document).ready(function() {
 		$('#outputDV').val(dv.toFixed(2));
 		$('#outputAng').val((dvtheta*180/Math.PI).toFixed(2));
 		$('#outputVel2').val((vnorm([vx1, vy1])).toFixed(2));
+		$('#outputCircDV').val((Math.sqrt(Planet.mu/final_orbit_params.rap)-Math.abs(final_orbit_params.hmag / final_orbit_params.rap)).toFixed(2));
 	};
 	//solve(5600000 ,364.9,660000 , 1600000 , 0.2, Planets.Kerbin);
 	var that = this;

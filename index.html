@@ -58,7 +58,7 @@
 				<form class="form-horizontal">
 					<fieldset class="calc">
 						<legend>Current Orbit Details</legend>
-						<p class="text-info">New feature! Units: <strong>m</strong>, <strong>km</strong> or <strong>Mm</strong></p>
+						<p class="text-info">Supported units: <strong>m</strong>, <strong>km</strong> or <strong>Mm</strong></p>
 						<div class="control-group">
 							<label class="control-label" for="inputBody">Body</label>
 							<div class="controls">
@@ -89,7 +89,7 @@
 								<input type="text" id="inputPE" value="60 km">
 							</div>
 						</div>
-						<p class="text-info">New feature! Select the direction of your orbit for more accurate results.</p>
+						<p class="text-info">Select the direction of your orbit for more accurate results.</p>
 						<div class="control-group">
 							<label class="control-label" for="inputPE">Orbit Direction</label>
 							<div class="controls">
@@ -129,7 +129,7 @@
 					</div>
 					<legend>Results</legend>
 					<div class="control-group">
-							<label class="control-label" for="outputPE">Periapsis (m)</label>
+							<label class="control-label" for="outputPE">Aerobraking Periapsis (m)</label>
 							<div class="controls">
 								<input type="text" id="outputPE" class="uneditable-input" disabled>
 							</div>
@@ -150,6 +150,13 @@
 							<label class="control-label" for="outputVel2">Orbital Velocity after Manoeuver (m/s)</label>
 							<div class="controls">
 								<input type="text" id="outputVel2" class="uneditable-input" disabled>
+							</div>
+					</div>
+					<p class="text-info">New feature! Delta-V required to circularize target orbit.</p>
+					<div class="control-group">
+							<label class="control-label" for="outputCircDV">Post-Aerobrake Circularization delta-V (m/s)</label>
+							<div class="controls">
+								<input type="text" id="outputCircDV" class="uneditable-input" disabled>
 							</div>
 					</div>
 					</fieldset>

@@ -141,22 +141,13 @@ $(document).ready(function() {
 
 	// Net force in atmosphere
 	this.in_atmo_force = function(d, m, A, Planet, orbitDir) {
-		var Kp = 1.2230948554874*0.008;
-		// Use surface velocity in drag calculation!
-		switch (orbitDir) {
-			// Note that the default orbit direction is CW in the code.
-			// (This is because atmospheric contact angle >0)
-			// This makes the sign of the planet's angular rotation the opposite of what one would expect!
-			case "prograde":
-				var v_surface = function(r,v) {return vdiff(v, vmult(-1,[-2.0*Math.PI/Planet.Trot*r[1], 2.0*Math.PI/Planet.Trot*r[0]]))};
-				break;
-			case "retrograde":
-				var v_surface = function(r,v) {return vdiff(v, vmult(1,[-2.0*Math.PI/Planet.Trot*r[1], 2.0*Math.PI/Planet.Trot*r[0]]))};
-				break;
-			case "ignore":
-				var v_surface = function(r,v) {return v;}
-				break;
-		};
+		var Kp = 1.2230948554874*0.008,
+			breaking_functions = {
+				"prograde": function(r,v) {return vdiff(v, vmult(-1,[-2.0*Math.PI/Planet.Trot*r[1], 2.0*Math.PI/Planet.Trot*r[0]]))},
+				"retrograde": function(r,v) {return vdiff(v, vmult(1,[-2.0*Math.PI/Planet.Trot*r[1], 2.0*Math.PI/Planet.Trot*r[0]]))},
+				"ignore": function(r,v) {return v;}
+			},
+			v_surface = breaking_functions[orbitDir];
 		return function(r,v) {return vsum(vmult(-0.5*Kp*Planet.P0*Math.exp((Planet.Rmin-vnorm(r))/Planet.H0)*vnorm(v_surface(r,v))*d*m*A, v_surface(r,v)), vmult(-m*Planet.mu/Math.pow(vnorm(r),3), r));};
 	};
 

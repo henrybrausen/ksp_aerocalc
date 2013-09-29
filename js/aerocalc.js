@@ -163,11 +163,11 @@ $(document).ready(function() {
 	var final_orbit_params;
 
 	this.calc1 = function(dist, vx, vy, d, Planet, orbitDir) {
-		var r0 = [dist, 0];
-		var v0 = [vx, vy];
-		var dt = 1;
-		var m = 1;
-		var A = 1;
+		var r0 = [dist, 0],
+			v0 = [vx, vy],
+			dt = 1,
+			m = 1,
+			A = 1;
 
 		var rap_out = 0;
 

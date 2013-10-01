@@ -24,7 +24,7 @@ $(document).ready(function() {
 
 	this.sign = function(x) { return x > 0 ? 1 : x < 0 ? -1 : 0; }
 
-	// Simple (and UGLY) vector math implementation
+	// Simple 2D vector math implementation
 	this.vmult = function( k, v ) {
 		var ret = new Array();
 		for (var i = 0; i < v.length; ++i) {ret[i] = v[i]*k;}
@@ -141,13 +141,14 @@ $(document).ready(function() {
 
 	// Net force in atmosphere
 	this.in_atmo_force = function(d, m, A, Planet, orbitDir) {
+		// Need to consider orbit direction!
 		var Kp = 1.2230948554874*0.008,
-			breaking_functions = {
+			braking_functions = {
 				"prograde": function(r,v) {return vdiff(v, vmult(-1,[-2.0*Math.PI/Planet.Trot*r[1], 2.0*Math.PI/Planet.Trot*r[0]]))},
 				"retrograde": function(r,v) {return vdiff(v, vmult(1,[-2.0*Math.PI/Planet.Trot*r[1], 2.0*Math.PI/Planet.Trot*r[0]]))},
 				"ignore": function(r,v) {return v;}
 			},
-			v_surface = breaking_functions[orbitDir];
+			v_surface = braking_functions[orbitDir];
 		return function(r,v) {return vsum(vmult(-0.5*Kp*Planet.P0*Math.exp((Planet.Rmin-vnorm(r))/Planet.H0)*vnorm(v_surface(r,v))*d*m*A, v_surface(r,v)), vmult(-m*Planet.mu/Math.pow(vnorm(r),3), r));};
 	};
 
@@ -231,7 +232,6 @@ $(document).ready(function() {
 		final_orbit_params = get_orbit_params(rvt.rf, rvt.vf, Planet);
 		return rap_out;
 	};
-	//console.log(calc1(1200000,-800,1540,0.2,Planets.Kerbin));
 
 	// Perform calculations for a given r (scalar), v (scalar), rpe (scalar)
 	this.calc_pe = function( r, v, rpe, d, Planet, orbitDir ) {
@@ -285,7 +285,6 @@ $(document).ready(function() {
 		$('#outputVel2').val((vnorm([vx1, vy1])).toFixed(2));
 		$('#outputCircDV').val((Math.sqrt(Planet.mu/final_orbit_params.rap)-Math.abs(final_orbit_params.hmag / final_orbit_params.rap)).toFixed(2));
 	};
-	//solve(5600000 ,364.9,660000 , 1600000 , 0.2, Planets.Kerbin);
 	var that = this;
 
 	$('#go').click(function() {
@@ -297,14 +296,10 @@ $(document).ready(function() {
 			v = parseFloat($('#inputVel').val(), 10),
 			pe = parseUnitFloat($('#inputPE').val(), 10)+Planet.Rmin,
 			orbitDir = $('input[name=inputDir]:radio:checked').val(),
-
-
 			d = parseFloat($('#inputD').val(), 10),
-
 			target = parseUnitFloat($('#inputAP').val(), 10)+Planet.Rmin;
 
 		solve(r,v,pe,target,d,Planet,orbitDir);
-		//solve(5600000 ,364.9,660000 , 1600000 , 0.2, Planets.Kerbin);
 	});
 	return this;
 })();

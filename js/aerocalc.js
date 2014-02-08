@@ -4,21 +4,21 @@ $(document).ready(function() {
 
 	this.mkPlanet = function(Rmin, Ratm, SOI, mu, H0, P0, Trot) {
 		return {
-			Rmin: Rmin,	// Radius of planet (distance to surface from center)
-			Ratm: Ratm+Rmin,	// Simplifies calculations later
-			SOI: SOI,	// Radius of sphere of influence of planet
-			mu: mu,	// Grav. parameter
-			H0: H0,	// Scale height of atmosphere (P falls off by 1/e for each H0)
-			P0: P0,	// Pressure at zero altitude.
-			Trot: Trot	// Sidereal Rotation Period
+			Rmin: Rmin,	// Equatorial Radius (m)
+			Ratm: Ratm+Rmin,	// Atmospheric Height (m) // helps simplify calculations
+			SOI: SOI,	// Sphere of influence (m)
+			mu: mu,	// Grav. parameter (m3/s2) // kerbal constant
+			H0: H0,	// Scale height of atmosphere (m) // P falls off by 1/e for each H0
+			P0: P0,	// Pressure at zero altitude (atm)
+			Trot: Trot	// Sidereal Rotation Period (s)
 		};
 	};
 
 	this.Planets = {
-		Eve: mkPlanet(700000,107974.64,85109365,8.1717302e12,7000,5,80500),
+		Eve: mkPlanet(700000,96708.574,85109365,8.1717302e12,7000,5,80500),
 		Kerbin: mkPlanet(600000,69077.553,84159286,3.5316e12,5000,1,21600),
-		Duna: mkPlanet(320000,36618.218,47921949,301363210000,3000,0.2,65517.859),
-		Jool: mkPlanet(6000000,165235.61,2455985200,2.82528e14,10000,15,36000),
+		Duna: mkPlanet(320000,41446.532,47921949,301363210000,3000,0.2,65517.859),
+		Jool: mkPlanet(6000000,138155.11,2455985200,2.82528e14,10000,15,36000),
 		Laythe: mkPlanet(500000,55262.042,3723645.8,1.962e12,4000,0.8,52980.879)
 	};
 
